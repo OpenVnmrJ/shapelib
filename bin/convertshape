@@ -1,0 +1,69 @@
+#!/bin/sh
+# convertshape - convert pulse shape (*.RF) into pattern definition (*.DEC)
+#
+# started 95/01/09, r.kyburz
+
+# +-------------------+
+# | argument checking |
+# +-------------------+
+if [ $# -eq 0 ]; then
+  echo "Usage: convertshape shapename"
+  exit
+fi
+
+# +-----------------------------------+
+# | check for presence of source file |
+# +-----------------------------------+
+cd $HOME/vnmrsys/shapelib
+f=`basename $1 .RF`
+firstchar=`echo $1 | awk '{substr($0,1,1)}'`
+ext=`echo $1 | awk '{substr($0,length-2,3)}'`
+if [ x$firstchar = 'x/' ]; then
+  if [ x$ext = x.RF ]; then
+    cp $1 . 2> /dev/null
+  else
+    cp $1.RF . 2> /dev/null
+  fi
+fi
+if [ ! -f $f.RF ]; then
+  cp /vnmr/shapelib/$f.RF . 2>/dev/null
+  if [ ! -f $f.RF ]; then
+    echo "convertshape: $f.RF not found"
+    exit
+  fi
+fi
+
+# +-----------------------------------+
+# | check for presence of target file |
+# +-----------------------------------+
+if [ -f $f.DEC ]; then
+  echo "convertshape: $f.DEC already exists"
+  exit
+fi
+
+# +-------------------+
+# | convert the shape |
+# +-------------------+
+awk '
+{
+  if (NF > 0) 
+  { 
+    ch1=substr($1,1,1) 
+    if (ch1 == "#")
+      print 
+    else 
+    { 
+      if (NF > 2)
+        printf("%5.1f",$3)
+      else
+        printf("  1.0")
+      printf(" %10.1f %10.3f",$1,$2)
+      if (NF > 3)
+        printf(" %5.1f\n",$4)
+      else
+        printf("\n")
+    } 
+  } 
+  else 
+    printf("\n") 
+}' < $f.RF > $f.DEC

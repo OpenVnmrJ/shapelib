@@ -1,0 +1,6 @@
+" convertshape - convert pulse shape (*.RF) into pattern definition (*.DEC) "
+if $#=0 then
+  write('error','Usage: convertshape(shapename)')
+  return
+endif
+shell('convertshape',$1)

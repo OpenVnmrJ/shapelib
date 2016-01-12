@@ -1,0 +1,36 @@
+
+************************************************************************
+ convertshape - convert shape (*.RF) into pattern file (*.DEC) (UNIX/M)
+************************************************************************
+
+      Syntax: convertshape shapename		(UNIX)
+	      convertshape(shapename)		(VNMR)
+
+ Description: convertshape converts a pulse shape definition
+	      (shapelib/*.RF) into a pattern definition file
+	      (shapelib/*.DEC). This is done by changing the column
+	      order (3->1, 1->2, 2->3, 4->4). Comment and empty lines
+	      are simply transferred to the target file; if column 3 is
+	      missing in the shape file, a 1.0 is filled into column 1;
+	      column 4 is transferred only if defined in the source file.
+	      The target file will be created in the user's shapelib
+	      directory; the body of the name will be the same as for the
+	      pulse shape definition file.
+	      Note that convertshape will abort if the target shape already
+	      exists.
+	      To use the newly created decoupling pattern, set dres=1;
+	      decoupler pattern from pulse shapes will usually have a 1.0
+	      in the first column (1 degree flip angle per slice at B1max).
+
+   Arguments: the only argument to convertshape is the name of the source
+	      (pulse shape) file, with or without extension. This file
+	      can be located either in the local shapelib, or in the global
+	      directory /vnmr/shapelib, and it can also be specified as
+	      absolute pathname (with or without extension). The target
+	      file will always be created in the local shapelib directory.
+
+    Examples: convertshape iburp.RF
+	      convertshape reburp
+	      convertshape /home/vnmr2/vnmrsys/shapelib/reburp
+	      convertshape /home/vnmr2/vnmrsys/shapelib/reburp.RF
+	      convertshape('hrm180')		[ from VNMR ]

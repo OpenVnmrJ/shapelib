@@ -1,0 +1,41 @@
+
+**************************************************************************
+ convertpattern - convert pattern (*.DEC) into shape file (*.RF) (UNIX/M)
+**************************************************************************
+
+      Syntax: convertpattern pattern_name dres		(UNIX)
+	      convertpattern<(pattern_name<,dres>)>	(VNMR)
+
+ Description: convertpattern converts a pattern definition file
+	      (shapelib/*.DEC)  into a pulse shape definition
+	      (shapelib/*.RF). This is done by changing the column
+	      order (2->1, 3->2, 1->3, 4->4). Comment and empty lines
+	      are simply transferred to the target file; if column 3 is
+	      missing in the pattern file, a 1023.0 is filled into column 1;
+	      column 4 is transferred only if defined in the source file.
+	      Column 3 of the shape file is calculated from column 1
+	      of the pattern file by dividing the tip angle by the
+	      specified tip angle resolution (dres); if dres is not
+	      specified, the value from the dres parameter is taken.
+	      The target file will be created in the user's shapelib
+	      directory; the body of the name will be the same as for the
+	      pulse shape definition file.
+	      Note that convertpattern will abort if the target pattern
+	      already exists.
+
+   Arguments: pattern_name is the decoupler pattern to convert. If it is
+		not dpecified, the value of the dseq parameter is taken
+		instead (for calls from VNMR only). The name can be specified
+		with or without extension, and also as relative or absolute
+		pathname.
+	      dres is the second, optional argument; if it is not specified,
+		the value of the dres parameter in the current experiment
+		is taken instead (for calls from VNMR only).
+
+    Examples: convertpattern mlev16.DEC 90
+	      convertpattern garp1 1
+	      convertpattern /home/vnmr2/vnmrsys/shapelib/waltz64 90
+	      convertpattern /home/vnmr2/vnmrsys/shapelib/waltz64.RF 90
+	      convertpattern				[ from VNMR ]
+	      convertpattern('mlev17')			[ from VNMR ]
+	      convertpattern('garp1',1)			[ from VNMR ]

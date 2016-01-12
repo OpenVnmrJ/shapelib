@@ -1,0 +1,21 @@
+" convertpattern - convert pattern definition (*.DEC) into pulse shape (*.RF) "
+if $#=0 then
+  $pat=dseq
+  if $pat='' then
+    write('error',
+          'convertpattern: pattern must be specified in dseq or as argument')
+    return
+  endif
+else
+  $pat=$1
+endif
+if $#<2 then
+  $dres=dres
+else
+  $dres=$2
+endif
+if $pat='' then
+  write('error','Usage: convertpattern<(pattern<,dres>)>')
+  return
+endif
+shell('convertpattern',$pat,$dres)

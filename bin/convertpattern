@@ -1,0 +1,87 @@
+#!/bin/sh
+# convertpattern - convert pattern definition (*.DEC) into pulse shape (*.RF)
+#
+# started 96/04/16, r.kyburz
+
+# +-------------------+
+# | argument checking |
+# +-------------------+
+if [ $# -eq 0 ]; then
+  echo "Usage: convertpattern shapename <dres>"
+  exit
+fi
+
+# +-----------------------------------+
+# | check for presence of source file |
+# +-----------------------------------+
+cd $HOME/vnmrsys/shapelib
+f=`basename $1 .DEC`
+firstchar=`echo $1 | awk '{substr($0,1,1)}'`
+ext=`echo $1 | awk '{substr($0,length-3,4)}'`
+if [ x$firstchar = 'x/' ]; then
+  if [ x$ext = x.DEC ]; then
+    cp $1 . 2> /dev/null
+  else
+    cp $1.DEC . 2> /dev/null
+  fi
+fi
+if [ ! -f $f.DEC ]; then
+  cp /vnmr/shapelib/$f.DEC . 2>/dev/null
+  if [ ! -f $f.DEC ]; then
+    echo "convertpattern: $f.DEC not found"
+    exit
+  fi
+fi
+
+if [ $# -lt 2 ]; then
+  dres=90
+else
+  dres=$2
+fi
+
+# +-----------------------------------+
+# | check for presence of target file |
+# +-----------------------------------+
+if [ -f $f.RF ]; then
+  echo "convertpattern: $f.RF already exists"
+  exit
+fi
+
+# +-------------------+
+# | convert the shape |
+# +-------------------+
+awk '
+{
+  if (NF > 0) 
+  { 
+    ch1=substr($1,1,1) 
+    if (ch1 == "#")
+      print 
+    else 
+    { 
+      ph=$2
+      if (NF > 2)
+        amp=$3
+      else
+        amp=1023.0
+      time=$1/'$dres'
+      while ( time > 255.5 )
+      {
+        if (NF > 3)
+          printf(" %5.1f  %5.1f  %5.1f  %5.1f\n", ph, amp, 255.0, $4)
+        else
+          printf(" %5.1f  %5.1f  %5.1f\n", ph, amp, 255.0)
+	time -= 255.0
+      }
+      if ( time > 0.499 )
+      {
+        if (NF > 3)
+          printf(" %5.1f  %5.1f  %5.1f  %5.1f\n", ph, amp, time, $4)
+        else
+          printf(" %5.1f  %5.1f  %5.1f\n", ph, amp, time)
+      }
+    } 
+  } 
+  else 
+    printf("\n") 
+}' < $f.DEC > $f.RF
