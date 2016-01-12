@@ -1,0 +1,19 @@
+*********************** VARIAN NMR USER GROUP LIBRARY ***********************
+                              NEW MANUAL ENTRY
+
+Syntax:		makestud(width, pulselength)
+
+Description:	Makes sech-amplitude/tanh-frequency swept decoupling with
+		250 steps, any bandwidth, and any pulselength. The output is
+		a file in the local shapelib named st_width_pulselength.DEC,
+		e.g., st_2_1o2.DEC, where 1o2 means 1.2ms.  This macro loads
+		the name of the decoupling file into dseq, sets dres=1.0, and
+		calculates dmf.  The number of steps can be increased by
+		changing 250 and 249 everywhere they occur in the macro.
+		References: Starcuk et al, JMR, A107, 24 (1994)
+			    Bendall, JMR, A112, 126 (1995)
+
+Arguments:	width - decoupling bandwidth in KHz
+		pulselength - 180 degrees pulse length in milliseconds
+
+Examples:	makestud(2,1.2)

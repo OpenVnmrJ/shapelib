@@ -1,0 +1,55 @@
+"  makeSTUD - makes sech-amplitude/tanh-frequency swept decoupling	"
+"            with 250 steps, any bandwidth, and any pulselength		"
+
+"         R. Bendall, Varian, August, 1994				"
+
+"  References:		Starcuk et al, JMR, A107, 24 (1994)		"
+"			Bendall, JMR, A112, 126 (1995)			"
+
+"  Usage: makeSTUD(width, pulselength), where width is in kHz and	"
+"       pulselength for one 180 degree flip is in milliseconds		"
+
+"  The output is a file in your personal shapelib named			"
+"  st_width_pulselength.DEC, e.g., st_2_1o2.DEC where 1o2 means 1.2ms	"
+
+"  This macro loads the name of the decoupling dile into dseq, sets	"
+"  dres=1.0, and calculates dmf.					"
+
+"  The no. of steps can be increased by changing 250 and 249 everywhere	"
+"  they occur in the macro.						"
+
+$a = 5.2982937*2.0  "gives an amplitude threshold of 0.01, ie sech($a/2)=0.01"
+
+$num1=''               $num2=''             $num3=''
+format($1,0,0):$num1   format($2,0,0):$num2
+$2=(trunc($2*10.0+0.5))/10.0   $3=trunc($2)      format($3,0,0):$num2
+$4=($2 - trunc($2))*10.0                         format($4,0,0):$num3
+$file=userdir+'/shapelib/st'+'_'+$num1+'_'+$num2+'o'+$num3+'.DEC'  rm($file)
+$f='st'+'_'+$num1+'_'+$num2+'o'+$num3
+write('line3','Writing data to %s...',$file)
+write('reset',$file)
+
+format($f,'lower'):dseq  dres=1.0   dmf=1000.0*250.0/($2*90.0)
+
+
+$i=1   repeat
+$x=$a*(-0.5 + ($i-1)/249)    exp($x):$y    $z=($y + (1/$y))/2.0    ln($z):$w
+$amp[$i] = 1023.0/$z     $amp[$i] = trunc($amp[$i] + 0.5)    
+$p[$i] = 360.0*$1*$2*$w/(2.0*$a)
+$i=$i+1   until $i>250
+
+
+$q= 0.0, 150.0, 60.0, 150.0, 0.0   $r = 0.0, 0.0, 180.0, 180.0
+$k=1   repeat
+ $j=1   repeat
+  $i=1   repeat  
+  $phase = $q[$j] + $r[$k] + (trunc(2.0*$p[$i] + 0.5))/2.0
+  write('file',$file,'1.0\t%5.1f\t%6.1f',$phase,$amp[$i])
+  $i=$i+1 until $i>250
+ $j=$j+1  until $j>5
+$k=$k+1  until $k>4
+write('line3','Done!')      dg
+
+return
+
+write('file',$file,'%5.1f\t%6.1f\t1.0',$phase,$amp[$i])
