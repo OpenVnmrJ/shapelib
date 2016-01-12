@@ -1,0 +1,9 @@
+"makempf(n) - makes an MPFn.DEC file by calling the makempf c program" 
+"the n argument specifies the number of freq. shifted inversion pulses"
+$shapelib = userdir + '/shapelib'
+exists($shapelib,'directory'):$exists
+if $exists = 0 then mkdir($shapelib) endif
+$curdir = '' pwd:$curdir
+cd($shapelib)
+shell('makempf',$1)
+cd($curdir)

@@ -1,0 +1,24 @@
+*******************************************************************************
+ makempf - create MPFn decoupling pattern  (Macro / C program)
+*******************************************************************************
+
+ Description: MPFn.DEC decoupling files (n=1-10) for BB heteronuclear
+	      decoupling.  For Unity or Unity+ systems with 64K PPM module
+	      in the dec. channel.
+ 	      Literature: T. Fujiwara and K. Nagayama: JMR 77 56-63 (1988).
+              		  T. Fujiwara, T. Anai, N. Kurihara, and K. Nagayama:
+ 				JMR Series A 104 103-105 (1993).
+
+ Usage:	      To create shapefiles from a shell window:
+               		cd ~/vnmrsys/shapelib
+                	makempf n		(where 0<n<11)
+	      To create shapefiles from within VNMR:
+                	makempf(n)		(where 0<n<11)
+		(the macro automatically creates the output (MPFn.DEC) in the
+                     local shapelib directory)
+
+	      Set dseq='MPFn' (n=1-10), dres=1.0 and dmm='p' (during
+	      acquisition).  Set dmf as calibrated for the current decoupler
+	      power level.  To keep the cyclic sideband intensities at a low
+	      level dmf>12000 is recommended.
+
